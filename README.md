@@ -1,6 +1,16 @@
 Hotswap plugin for Mojito's Resource Store
 ==========================================
 
+Build Status
+------------
+
+[![Build Status](https://travis-ci.org/yahoo/mojito-rs-hotswap.png)](https://travis-ci.org/yahoo/mojito-rs-hotswap)
+
+Usage
+-----
+
+In your app's package.json, add the `mojito-rs-addon` package as a dependency.
+
 This package contains a set of [Mojito](https://github.com/yahoo/mojito)
 Resource Store addons. Their role is to monitor changes in Mojito resources to
 dynamically update the necessary Resource Store meta-data and see the changes
