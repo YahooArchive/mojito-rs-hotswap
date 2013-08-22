@@ -1,5 +1,5 @@
-Hotswap plugin for Mojito's Resource Store
-==========================================
+Mojito Resource Store Hotswap plugin
+====================================
 
 Build Status
 ------------
