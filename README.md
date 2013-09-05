@@ -27,6 +27,6 @@ this plugin only on developer boxes!
 Mojito allows you to disable the view cache, which you may want to configure on
 developer boxes as well:
 
-    viewEngine: {
-        cacheTemplates: false
+    "viewEngine": {
+        "cacheTemplates": false
     }
