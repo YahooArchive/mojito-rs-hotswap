@@ -2,7 +2,7 @@
     "name": "mojito-rs-hotswap",
     "version": "0.0.1",
     "description": "Hotswap plugin for Mojito's Resource Store",
-    "author": "Julien Lecomte <jlecomte@yahoo-inc.com>",
+    "author": "Jacques Arnoux <arnoux@yahoo-inc.com>",
     "contributors": [
         "Julien Lecomte <jlecomte@yahoo-inc.com>",
         "Jacques Arnoux <arnoux@yahoo-inc.com>"
