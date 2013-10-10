@@ -13,7 +13,11 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
 
         hotswapMojitControllerResourcePath = libpath.join(fixtures, 'mojits/HotswapMojit/controller.server.js'),
 
-        oldControllerContent,
+        oldControllerContent =
+            "YUI.add('HotswapMojit', function (Y, NAME) {\n" +
+            "    'use strict';\n" +
+            "    Y.hotswap = 'originalValue';\n" +
+            "});",
 
         newControllerContent =
             "YUI.add('HotswapMojit', function (Y, NAME) {\n" +
@@ -24,8 +28,6 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
         suite = new YUITest.TestSuite(NAME),
 
         store;
-
-    oldControllerContent = libfs.readFileSync(hotswapMojitControllerResourcePath, 'utf-8');
 
     Y.applyConfig({
         modules: {
@@ -58,14 +60,6 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
             return Y.mojito.util.blend(this._config.context, ctx);
         },
 
-        parseResourceVersion: function (source, type, subtype, mojitType) {
-            return {
-                yui: {
-                    name: 'HotswapMojit'
-                }
-            };
-        },
-
         getStaticAppConfig: function () {
             return {
                 resourceStore: {
@@ -76,6 +70,10 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
 
         listAllMojits: function () {
             return ['HotswapMojit'];
+        },
+
+        addResourceVersion: function (res) {
+            return;
         },
 
         getResourceVersions: function () {
@@ -100,6 +98,9 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
         name: 'hotswap yui rs addon tests',
 
         setUp: function () {
+
+            libfs.writeFileSync(hotswapMojitControllerResourcePath, oldControllerContent);
+
             store = new MockRS({ root: fixtures });
 
             // Plug in mocked config addon
@@ -133,7 +134,11 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
             Y.applyConfig({ useSync: false });
 
             // Trigger the addon hook on this method so the file is watched
-            store.parseResourceVersion({
+            store.addResourceVersion({
+                type: 'controller',
+                yui: {
+                    name: 'HotswapMojit'
+                },
                 fs: {
                     ext: '.js',
                     fullPath: hotswapMojitControllerResourcePath

@@ -28,7 +28,6 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
 
                 this.config = config;
 
-                // console.log('[hotswap-yui.js:29] beforeHost on yui plugin' + '');
                 // put watchers on the resources once resolved
                 this.afterHostMethod('addResourceVersion', this.addResourceVersion);
             }
@@ -53,7 +52,6 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                     res.type === 'yui-lang' ||
                     (res.type === 'addon' && res.subtype === 'ac')) {
 
-                console.log('[hotswap-yui.js:42] Ready to reload: ' + res.type + ' ' + res.subtype + ' ' + fullPath);
                 onSave = function (event) {
                     try {
                         if (libfs.readFileSync(fullPath, 'utf8')) {
@@ -78,7 +76,6 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                     }
                 };
             } else if (res.source.fs.isFile) {
-                console.log('[hotswap-yui.js:80] Won\'t reload: ' + res.type + ' ' + res.subtype + ' ' + fullPath);
                 // Else just warn that this yui module needs restarting the app
                 onSave = function (event) {
                     host.runtimeYUI.log(fullPath + ' will not be reloaded with hotswap.', 'warn', NAME);
