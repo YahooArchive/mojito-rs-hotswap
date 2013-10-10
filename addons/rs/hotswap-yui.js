@@ -12,65 +12,96 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
 
     var libfs = require('fs');
 
-    function RSAddonHotswapYUI() {
-        RSAddonHotswapYUI.superclass.constructor.apply(this, arguments);
+    function RSYUIAddonHotswap() {
+        RSYUIAddonHotswap.superclass.constructor.apply(this, arguments);
     }
 
-    RSAddonHotswapYUI.NS = 'hotswap-yui';
+    RSYUIAddonHotswap.NS = 'hotswap-yui';
 
-    Y.extend(RSAddonHotswapYUI, Y.Plugin.Base, {
+    Y.extend(RSYUIAddonHotswap, Y.Plugin.Base, {
 
         initializer: function (config) {
-            var appConfigStatic = config.host.getStaticAppConfig();
-            if (appConfigStatic.resourceStore &&
-                    appConfigStatic.resourceStore.hotswap) {
+            var appConfigStatic = config.host.host.getStaticAppConfig();
+            this.host = config.host;
+
+            if (appConfigStatic.resourceStore && appConfigStatic.resourceStore.hotswap) {
+
                 this.config = config;
+
+                // console.log('[hotswap-yui.js:29] beforeHost on yui plugin' + '');
                 // put watchers on the resources once resolved
-                this.afterHostMethod('parseResourceVersion',
-                    this.parseResourceVersion, this);
+                this.beforeHostMethod('parseResourceVersion', this.parseResourceVersion);
             }
         },
 
         parseResourceVersion: function (source, type, subtype, mojitType) {
+            console.log('[hotswap-yui.js:42] : ' + type + ' ' + subtype + ' ' + source.fs.basename);
+
             var self = this,
                 host = self.config.host,
-                res = Y.Do.currentRetVal;
+                res = Y.Do.currentRetVal,
+                onSave;
 
-            // If the modified resource is a script, reload it from the file
-            // system into the runtime YUI instance.
+            if (source.fs.ext === '.js') {
 
-            if ('.js' === source.fs.ext) {
+                // If the modified resource is a script, reload it from the file
+                // system into the runtime YUI instance.
+                if (type === 'controller' || (type === 'addon' && subtype === 'ac')) {
+                    onSave = function (event) {
+                        try {
+                            if (libfs.readFileSync(source.fs.fullPath, 'utf8')) {
+                                host.runtimeYUI.applyConfig({ useSync: true });
+
+                                // load
+                                host.runtimeYUI.Get.js(source.fs.fullPath, {});
+
+                                // use
+                                host.runtimeYUI.Env._attached[res.yui.name] = false;
+                                host.runtimeYUI.use(res.yui.name, function () {
+                                    host.runtimeYUI.log('Reloaded' + source.fs.basename, 'info', NAME);
+                                });
+
+                                host.runtimeYUI.applyConfig({ useSync: false });
+                            }
+                        } catch (e) {
+                            host.runtimeYUI.log('Failed to reload module ' +
+                                (res.yui && res.yui.name) + ' at ' +
+                                source.fs.fullPath + '\n' + e.message + '\n' + e.stack,
+                                'error', NAME);
+                        }
+                    };
+                } else {
+                    // Else just warn that this yui module needs restarting the app
+                    onSave = function (event) {
+                        host.runtimeYUI.log(source.fs.basename + ' will not be reloaded with hotswap.', 'warn', NAME);
+                    };
+                }
+
                 libfs.watch(source.fs.fullPath, {
                     persistent: false
-                }, function (event) {
-                    try {
-                        if (libfs.readFileSync(source.fs.fullPath, 'utf8')) {
-                            host.runtimeYUI.applyConfig({ useSync: true });
-
-                            // load
-                            host.runtimeYUI.Get.js(source.fs.fullPath, {});
-
-                            // use
-                            host.runtimeYUI.Env._attached[res.yui.name] = false;
-                            host.runtimeYUI.use(res.yui.name, function () {
-                                host.runtimeYUI.log('Reloaded YUI module at: ' +
-                                    source.fs.fullPath, 'info', NAME);
-                            });
-
-                            host.runtimeYUI.applyConfig({ useSync: false });
-                        }
-                    } catch (e) {
-                        host.runtimeYUI.log('Failed to reload module ' +
-                            (res.yui && res.yui.name) + ' at ' +
-                            source.fs.fullPath + '\n' + e.message,
-                            'error', NAME);
-                    }
-                });
+                }, onSave);
             }
         }
     });
 
-    Y.namespace('mojito.addons.rs')[RSAddonHotswapYUI.NS] = RSAddonHotswapYUI;
+    function RSAddonHotswap() {
+        RSAddonHotswap.superclass.constructor.apply(this, arguments);
+    }
+    RSAddonHotswap.NS = 'hotswap-yui';
+
+    Y.extend(RSAddonHotswap, Y.Plugin.Base, {
+
+        initializer: function (config) {
+            this.store = config.host;
+            this.beforeHostMethod('preloadResourceVersions', this.preloadResourceVersions, this);
+        },
+
+        preloadResourceVersions: function () {
+            this.store.yui.plug(RSYUIAddonHotswap, {});
+        }
+    });
+
+    Y.namespace('mojito.addons.rs')[RSAddonHotswap.NS] = RSAddonHotswap;
 
 }, '0.0.1', {
     requires: [
