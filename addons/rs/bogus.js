@@ -18,11 +18,11 @@ YUI.add('addon-rs-bogus', function (Y, NAME) {
     Y.extend(RSBogusBaseBogusPlugin, Y.Plugin.Base, {
 
         initializer: function (config) {
-            console.log('[bogus.js:21] bogus plugin is hooking itself into parseResourceVersion: ');
-            this.beforeHostMethod('parseResourceVersion', this.parseResourceVersion, this);
+            console.log('[bogus.js:21] bogus plugin is hooking itself into myOwnMethod: ');
+            this.beforeHostMethod('myOwnMethod', this.myOwnMethod, this);
         },
 
-        parseResourceVersion: function () {
+        myOwnMethod: function () {
             console.log('[bogus.js:33] BOGUS EXECUTED!!');
         }
     });

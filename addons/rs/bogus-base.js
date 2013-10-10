@@ -23,7 +23,11 @@ YUI.add('addon-rs-bogus-base', function (Y, NAME) {
         },
 
         parseResourceVersion: function () {
-            console.log('[bogusBase.js:26] parseResourceVersion!!');
+            this.myOwnMethod();
+        },
+
+        myOwnMethod: function () {
+            console.log('[bogus-base.js:30] own method');
         }
     });
 
