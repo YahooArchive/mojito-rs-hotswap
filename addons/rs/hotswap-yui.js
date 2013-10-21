@@ -41,7 +41,7 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                 onSave;
 
             // skip resources that do not correspond to actual resources
-            if (res.subtype === 'synthetic') {
+            if (res.subtype === 'synthetic' || !res.source.fs.isFile) {
                 return;
             }
 
@@ -52,7 +52,7 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                     res.type === 'yui-lang' ||
                     (res.type === 'addon' && res.subtype === 'ac')) {
 
-                onSave = function (event) {
+                onSave = function (curr, prev) {
                     try {
                         if (libfs.readFileSync(fullPath, 'utf8')) {
                             host.runtimeYUI.applyConfig({ useSync: true });
@@ -75,16 +75,18 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                             'error', NAME);
                     }
                 };
-            } else if (res.source.fs.isFile) {
+            } else {
                 // Else just warn that this yui module needs restarting the app
-                onSave = function (event) {
+                onSave = function (curr, prev) {
                     host.runtimeYUI.log(fullPath + ' will not be reloaded with hotswap.', 'warn', NAME);
                 };
             }
 
-            libfs.watch(fullPath, {
+            libfs.watchFile(fullPath, {
                 persistent: false
-            }, onSave);
+            }, function (curr, prev) {
+                setTimeout(onSave.bind(this, curr, prev), 100);
+            });
         }
     });
 
