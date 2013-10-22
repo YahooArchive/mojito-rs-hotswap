@@ -139,9 +139,11 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
                 yui: {
                     name: 'HotswapMojit'
                 },
-                fs: {
-                    ext: '.js',
-                    fullPath: hotswapMojitControllerResourcePath
+                source: {
+                    fs: {
+                        isFile: true,
+                        fullPath: hotswapMojitControllerResourcePath
+                    }
                 }
             });
         },
@@ -161,13 +163,15 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
             // Modify the resource on the filesystem
             libfs.writeFile(hotswapMojitControllerResourcePath, newControllerContent,
                 function (err) {
-                    test.resume();
+                    setTimeout(function () {
+                        test.resume();
 
-                    if (err) {
-                        throw err;
-                    }
+                        if (err) {
+                            throw err;
+                        }
 
-                    A.areEqual('modifiedValue', Y.hotswap);
+                        A.areEqual('modifiedValue', Y.hotswap);
+                    }, 101);
                 });
 
             test.wait();

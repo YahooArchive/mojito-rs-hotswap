@@ -52,7 +52,7 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                     res.type === 'yui-lang' ||
                     (res.type === 'addon' && res.subtype === 'ac')) {
 
-                onSave = function (curr, prev) {
+                onSave = function (event) {
                     try {
                         if (libfs.readFileSync(fullPath, 'utf8')) {
                             host.runtimeYUI.applyConfig({ useSync: true });
@@ -77,15 +77,15 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                 };
             } else {
                 // Else just warn that this yui module needs restarting the app
-                onSave = function (curr, prev) {
+                onSave = function (event) {
                     host.runtimeYUI.log(fullPath + ' will not be reloaded with hotswap.', 'warn', NAME);
                 };
             }
 
-            libfs.watchFile(fullPath, {
+            libfs.watch(fullPath, {
                 persistent: false
-            }, function (curr, prev) {
-                setTimeout(onSave.bind(this, curr, prev), 100);
+            }, function (event) {
+                setTimeout(onSave.bind(this, event), 100);
             });
         }
     });
