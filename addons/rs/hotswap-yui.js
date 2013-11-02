@@ -52,41 +52,42 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                     res.type === 'yui-lang' ||
                     (res.type === 'addon' && res.subtype === 'ac')) {
 
-                onSave = function (event) {
-                    try {
-                        if (libfs.readFileSync(fullPath, 'utf8')) {
-                            host.runtimeYUI.applyConfig({ useSync: true });
+                // Upon save, wait 100 ms. (to let the system finish writing the file)
+                // and reload;
+                libfs.watch(fullPath, {
+                    persistent: false
+                }, function (event) {
+                    setTimeout(function (event) {
+                        try {
+                            if (libfs.readFileSync(fullPath, 'utf8')) {
+                                host.runtimeYUI.applyConfig({ useSync: true });
 
-                            // load
-                            host.runtimeYUI.Get.js(fullPath, {});
+                                // load
+                                host.runtimeYUI.Get.js(fullPath, {});
 
-                            // use
-                            host.runtimeYUI.Env._attached[res.yui.name] = false;
-                            host.runtimeYUI.use(res.yui.name, function () {
-                                host.runtimeYUI.log('Reloaded: ' + fullPath, 'info', NAME);
-                            });
+                                // detach
+                                host.runtimeYUI.Env._attached[res.yui.name] = false;
+                                // erase
+                                delete host.runtimeYUI[res.yui.name];
 
-                            host.runtimeYUI.applyConfig({ useSync: false });
+                                // reuse
+                                host.runtimeYUI.use(res.yui.name, function () {
+                                    host.runtimeYUI.log('Reloaded: ' + fullPath, 'info', NAME);
+                                });
+
+                                host.runtimeYUI.applyConfig({ useSync: false });
+                            }
+                        } catch (e) {
+                            if (host.runtimeYUI) {
+                                host.runtimeYUI.log('Failed to reload module ' +
+                                    (res.yui && res.yui.name) + ' at ' +
+                                    fullPath + '\n' + e.message + '\n' + e.stack,
+                                    'error', NAME);
+                            }
                         }
-                    } catch (e) {
-                        host.runtimeYUI.log('Failed to reload module ' +
-                            (res.yui && res.yui.name) + ' at ' +
-                            fullPath + '\n' + e.message + '\n' + e.stack,
-                            'error', NAME);
-                    }
-                };
-            } else {
-                // Else just warn that this yui module needs restarting the app
-                onSave = function (event) {
-                    host.runtimeYUI.log(fullPath + ' will not be reloaded with hotswap.', 'warn', NAME);
-                };
+                    }, 100);
+                });
             }
-
-            libfs.watch(fullPath, {
-                persistent: false
-            }, function (event) {
-                setTimeout(onSave.bind(this, event), 100);
-            });
         }
     });
 
