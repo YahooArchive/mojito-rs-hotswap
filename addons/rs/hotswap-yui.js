@@ -67,8 +67,6 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
 
                                 // detach
                                 host.runtimeYUI.Env._attached[res.yui.name] = false;
-                                // erase
-                                delete host.runtimeYUI[res.yui.name];
 
                                 // reuse
                                 host.runtimeYUI.use(res.yui.name, function () {
