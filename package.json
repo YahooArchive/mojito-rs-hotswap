@@ -1,41 +1,41 @@
 {
-  "name": "mojito-rs-hotswap",
-  "version": "0.0.4",
-  "description": "Hotswap plugin for Mojito's Resource Store",
-  "author": "Jacques Arnoux <arnoux@yahoo-inc.com>",
-  "contributors": [
-    "Julien Lecomte <jlecomte@yahoo-inc.com>",
-    "Jacques Arnoux <arnoux@yahoo-inc.com>"
-  ],
-  "engines": {
-    "node": "> 0.10",
-    "npm": "> 1.2",
-    "mojito": ">= 0.7.4"
-  },
-  "devDependencies": {
-    "mojito": "0.7.x",
-    "mojito-cli": "~0.0.5",
-    "istanbul": "*"
-  },
-  "scripts": {
-    "pretest": "mojito jslint app",
-    "test": "istanbul cover --yui=true --dir=artifacts/test/coverage ./node_modules/.bin/mojito -- test app .",
-    "posttest": "istanbul check-coverage --statements 80 --lines 80 --functions 80"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/yahoo/mojito-rs-hotswap.git"
-  },
-  "bugs": "https://github.com/yahoo/mojito-rs-hotswap/issues",
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "https://github.com/yahoo/mojito-rs-hotswap/blob/master/LICENSE.txt"
+    "name": "mojito-rs-hotswap",
+    "version": "0.0.5",
+    "description": "Hotswap plugin for Mojito's Resource Store",
+    "author": "Jacques Arnoux <arnoux@yahoo-inc.com>",
+    "contributors": [
+        "Julien Lecomte <jlecomte@yahoo-inc.com>",
+        "Jacques Arnoux <arnoux@yahoo-inc.com>"
+    ],
+    "engines": {
+        "node": "> 0.10",
+        "npm": "> 1.2",
+        "mojito": "> 0.8"
+    },
+    "devDependencies": {
+        "mojito": "0.8.x",
+        "mojito-cli": "0.1.x",
+        "istanbul": "*"
+    },
+    "scripts": {
+        "pretest": "mojito jslint app",
+        "test": "istanbul cover --yui=true --dir=artifacts/test/coverage ./node_modules/.bin/mojito -- test app .",
+        "posttest": "istanbul check-coverage --statements 80 --lines 80 --functions 80"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/yahoo/mojito-rs-hotswap.git"
+    },
+    "bugs": "https://github.com/yahoo/mojito-rs-hotswap/issues",
+    "licenses": [
+        {
+            "type": "BSD",
+            "url": "https://github.com/yahoo/mojito-rs-hotswap/blob/master/LICENSE.txt"
+        }
+    ],
+    "yahoo": {
+        "mojito": {
+            "type": "bundle"
+        }
     }
-  ],
-  "yahoo": {
-    "mojito": {
-      "type": "bundle"
-    }
-  }
 }
