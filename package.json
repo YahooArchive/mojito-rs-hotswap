@@ -1,6 +1,6 @@
 {
     "name": "mojito-rs-hotswap",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Hotswap plugin for Mojito's Resource Store",
     "author": "Jacques Arnoux <arnoux@yahoo-inc.com>",
     "contributors": [
