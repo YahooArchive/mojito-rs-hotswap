@@ -116,7 +116,7 @@ YUI.add('addon-rs-hotswap-yui-tests', function (Y, NAME) {
             });
 
             // Give the store a reference to the runtime YUI instance
-            store.runtimeYUI = Y;
+            store.Y = Y;
 
             // Add a fake YUI resource to the runtime YUI instance
             Y.applyConfig({
