@@ -60,24 +60,24 @@ YUI.add('addon-rs-hotswap-yui', function (Y, NAME) {
                     setTimeout(function (event) {
                         try {
                             if (libfs.readFileSync(fullPath, 'utf8')) {
-                                host.runtimeYUI.applyConfig({ useSync: true });
+                                host.Y.applyConfig({ useSync: true });
 
                                 // load
-                                host.runtimeYUI.Get.js(fullPath, {});
+                                host.Y.Get.js(fullPath, {});
 
                                 // detach
-                                host.runtimeYUI.Env._attached[res.yui.name] = false;
+                                host.Y.Env._attached[res.yui.name] = false;
 
                                 // reuse
-                                host.runtimeYUI.use(res.yui.name, function () {
-                                    host.runtimeYUI.log('Reloaded: ' + fullPath, 'info', NAME);
+                                host.Y.use(res.yui.name, function () {
+                                    host.Y.log('Reloaded: ' + fullPath, 'info', NAME);
                                 });
 
-                                host.runtimeYUI.applyConfig({ useSync: false });
+                                host.Y.applyConfig({ useSync: false });
                             }
                         } catch (e) {
-                            if (host.runtimeYUI) {
-                                host.runtimeYUI.log('Failed to reload module ' +
+                            if (host.Y) {
+                                host.Y.log('Failed to reload module ' +
                                     (res.yui && res.yui.name) + ' at ' +
                                     fullPath + '\n' + e.message + '\n' + e.stack,
                                     'error', NAME);
